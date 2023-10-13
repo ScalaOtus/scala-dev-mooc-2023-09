@@ -1,8 +1,6 @@
 package module1
 
-import java.util.UUID
 import scala.annotation.tailrec
-import java.time.Instant
 import scala.language.postfixOps
 
 
@@ -77,6 +75,20 @@ object recursion {
    * F0 = 0, F1 = 1, Fn = Fn-1 + Fn - 2
    *
    */
+
+  //реализация
+  def fibonachi(n: Int): List[Int] = {
+    @tailrec
+    def inner(cur: Int, prev: Int, sumFib: (Int, List[Int])): (Int, List[Int]) = {
+      cur match {
+        case 0 => (prev, sumFib._2)
+        case _ => inner(cur - 1, sumFib._1, (prev + sumFib._1, prev +: sumFib._2))
+      }
+
+    }
+    val fibC = inner(n, 0, (1, List()))
+    (fibC._1 +: fibC._2).reverse
+  }
 
 
 }
@@ -158,8 +170,6 @@ object hof{
    */
    def createRequestSubscription() = ???
 
-
-
 }
 
 
@@ -203,50 +213,85 @@ object hof{
     else Some(x / y)
   }
 
-  sealed trait Option[+T]{
-
-     def isEmpty: Boolean = this match {
-       case None => true
-       case Some(v) => false
-     }
-
-     def get: T = this match {
-       case Some(v) => v
-       case None => throw new Exception("get on empty Option")
-     }
-
-     def map[B](f: T => B): Option[B] = flatMap(v => Option(f(v)))
-
-     def flatMap[B](f: T => Option[B]): Option[B] = this match {
-       case Some(v) => f(v)
-       case None => None
-     }
-  }
 
   val opt: Option[Int] = ???
 
   val opt2: Option[Int] =  opt.flatMap(i => Option(i + 1))
   val opt3  =  opt.map(i => i + 1)
 
-  case class Some[T](v: T) extends Option[T]
-  case object None extends Option[Nothing]
+
 
   object Option{
     def apply[T](v: T): Option[T] = Some(v)
   }
 
 
+//////////////// Домашнее задание  //////////////////
 
 
+  sealed trait Option[+T] {
+
+    def isEmpty: Boolean = this match {
+      case None => true
+      case Some(v) => false
+    }
 
 
+    def get: T = this match {
+      case Some(v) => v
+      case None => throw new Exception("get on empty Option")
+    }
+
+    def map[B](f: T => B): Option[B] = flatMap(v => Option(f(v)))
+
+    def flatMap[B](f: T => Option[B]): Option[B] = this match {
+      case Some(v) => f(v)
+      case None => None
+    }
+
+    // методы реализованные в домашнеем задании
+
+    def printIfAny: Unit = this match {
+      case None => ()
+      case Some(v) => print(v)
+    }
+
+    def zip[T1 >: T, B](that: Option[B]): Option[(T1, B)] = (this, that) match {
+      case (Some(a), Some(b)) => Some((a, b))
+      case _ => None
+    }
+
+    def filter(p: T => Boolean): Option[T] = this match {
+      case None => None
+      case Some(v) => if (p(v)) Some(v) else None
+    }
+
+    // другие реализации
+
+    def filter_2(p: T => Boolean): Option[T] = this match {
+      case Some(v) if p(v) => this
+      case _ => None
+    }
+
+    def filter_3(p: T => Boolean): Option[T] = flatMap(v => if (p(v)) Some(v) else None)
+
+    //опционно
+    def isDefined:Boolean = !isEmpty
 
 
+  }
 
+  case class Some[T](v: T) extends Option[T]
+  case object None extends Option[Nothing]
+
+
+  ////////////// Задание ////////////////////////
   /**
    *
    * Реализовать метод printIfAny, который будет печатать значение, если оно есть
    */
+
+  //реализовано в sealed trait Option выше
 
 
   /**
@@ -254,12 +299,18 @@ object hof{
    * Реализовать метод zip, который будет создавать Option от пары значений из 2-х Option
    */
 
+  //реализовано в sealed trait Option выше
 
   /**
    *
    * Реализовать метод filter, который будет возвращать не пустой Option
    * в случае если исходный не пуст и предикат от значения = true
    */
+
+  //реализовано в sealed trait Option выше
+
+  // Тест реализаций в методе main
+  ///////////////////////////////////////////////////
 
  }
 

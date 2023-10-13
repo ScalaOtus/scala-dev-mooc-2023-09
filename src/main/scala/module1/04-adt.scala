@@ -1,8 +1,5 @@
 package module1
 
-import java.time.LocalDate
-import java.time.YearMonth
-
 object adt {
 
   object tuples {
@@ -85,7 +82,10 @@ object adt {
 
     /** Реализовать экземпляр типа IntOrString с помощью конструктора Right
       */
-    val intOrString = Either[Int, String]
+    //val intOrString = Either[Int, String]
+
+    //решение
+    val intOrString = Right("Правое")
 
 
     type CreditCard
