@@ -4,13 +4,12 @@ import scala.annotation.tailrec
 import scala.language.postfixOps
 
 
-
 /**
  * referential transparency
  */
 
 
- object referential_transparency{
+object referential_transparency {
 
   case class Abiturient(id: String, email: String, fio: String)
 
@@ -18,21 +17,23 @@ import scala.language.postfixOps
 
   sealed trait Notification
 
-  object Notification{
+  object Notification {
     case class Email(email: String, text: Html) extends Notification
+
     case class Sms(telephone: String, msg: String) extends Notification
   }
 
 
   case class AbiturientDTO(email: String, fio: String, password: String)
 
-  trait NotificationService{
+  trait NotificationService {
     def sendNotification(notification: Notification): Unit
+
     def createNotification(abiturient: Abiturient): Notification
   }
 
 
-  trait AbiturientService{
+  trait AbiturientService {
 
     def registerAbiturient(abiturientDTO: AbiturientDTO): Abiturient
   }
@@ -40,7 +41,7 @@ import scala.language.postfixOps
 }
 
 
- // recursion
+// recursion
 
 object recursion {
 
@@ -52,22 +53,21 @@ object recursion {
   def fact(n: Int): Int = {
     var _n = 1
     var i = 2
-    while (i <= n){
+    while (i <= n) {
       _n *= i
       i += 1
     }
     _n
   }
 
-  def factRec(n: Int): Int = if(n == 0) 1 else n * factRec(n - 1)
+  def factRec(n: Int): Int = if (n == 0) 1 else n * factRec(n - 1)
 
   def tailRec(n: Int): Int = {
     @tailrec
-    def loop(i: Int, accum: Int): Int = if(i == 0) accum else loop(i - 1, n * accum)
+    def loop(i: Int, accum: Int): Int = if (i == 0) accum else loop(i - 1, n * accum)
+
     loop(n, 1)
   }
-
-
 
 
   /**
@@ -77,23 +77,23 @@ object recursion {
    */
 
   //реализация
-  def fibonachi(n: Int): List[Int] = {
+  def fibonachi(n: Int): Seq[Int] = {
     @tailrec
-    def inner(cur: Int, prev: Int, sumFib: (Int, List[Int])): (Int, List[Int]) = {
+    def inner(cur: Int, prev: Int, sumFib: (Int, Seq[Int])): (Int, Seq[Int]) = {
       cur match {
         case 0 => (prev, sumFib._2)
         case _ => inner(cur - 1, sumFib._1, (prev + sumFib._1, prev +: sumFib._2))
       }
-
     }
-    val fibC = inner(n, 0, (1, List()))
+
+    val fibC = inner(n, 0, (1, Seq()))
     (fibC._1 +: fibC._2).reverse
   }
 
 
 }
 
-object hof{
+object hof {
 
 
   // обертки
@@ -137,96 +137,79 @@ object hof{
   def partial2[A, B, C](a: A, f: (A, B) => C): B => C = f.curried(a)
 
 
+  trait Consumer {
+    def subscribe(topic: String): LazyList[Record]
+  }
 
+  case class Record(value: String)
 
+  case class Request()
 
-
-
-
-
-
-
-
-
-
-
-
-  trait Consumer{
-       def subscribe(topic: String): LazyList[Record]
-   }
-
-   case class Record(value: String)
-
-   case class Request()
-   
-   object Request {
-       def parse(str: String): Request = ???
-   }
+  object Request {
+    def parse(str: String): Request = ???
+  }
 
   /**
    *
    * (Опционально) Реализовать ф-цию, которая будет читать записи Request из топика,
    * и сохранять их в базу
    */
-   def createRequestSubscription() = ???
+  def createRequestSubscription() = ???
 
 }
 
 
-
-
-
-
 /**
- *  Реализуем тип Option
+ * Реализуем тип Option
  */
 
 
- object opt {
+object opt {
 
   /**
    *
    * Реализовать структуру данных Option, который будет указывать на присутствие либо отсутсвие результата
    */
 
-   // + covariant Option[Animal] родитель для Option[Dog]
-   // invariant Option[Animal] нет связи Option[Dog]
-   // - contravariant связь наоборот между Option[Animal] и Option[Dog]
+  // + covariant Option[Animal] родитель для Option[Dog]
+  // invariant Option[Animal] нет связи Option[Dog]
+  // - contravariant связь наоборот между Option[Animal] и Option[Dog]
 
-   class Animal
-   class Dog extends Animal
+  class Animal
 
-   def findAnimal: Option[Animal] = ???
-   def findDog: Option[Dog] = ???
+  class Dog extends Animal
 
-   def treat(animal: Animal): Unit = ???
+  def findAnimal: Option[Animal] = ???
 
-   def treat(animal: Option[Animal]): Unit = ???
+  def findDog: Option[Dog] = ???
 
-   val animal: Animal = ???
-   val dog: Dog = ???
-   treat(animal)
-   treat(dog)
+  def treat(animal: Animal): Unit = ???
+
+  def treat(animal: Option[Animal]): Unit = ???
+
+  val animal: Animal = ???
+  val dog: Dog = ???
+  treat(animal)
+  treat(dog)
 
   def divide(x: Int, y: Int): Option[Int] = {
-    if(y == 0) None
+    if (y == 0) None
     else Some(x / y)
   }
 
 
   val opt: Option[Int] = ???
 
-  val opt2: Option[Int] =  opt.flatMap(i => Option(i + 1))
-  val opt3  =  opt.map(i => i + 1)
+  val opt2: Option[Int] = opt.flatMap(i => Option(i + 1))
+  val opt3 = opt.map(i => i + 1)
 
 
-
-  object Option{
+  object Option {
     def apply[T](v: T): Option[T] = Some(v)
   }
 
 
-//////////////// Домашнее задание  //////////////////
+  //////////////// Домашнее задание  //////////////////
 
 
   sealed trait Option[+T] {
@@ -276,12 +259,13 @@ object hof{
     def filter_3(p: T => Boolean): Option[T] = flatMap(v => if (p(v)) Some(v) else None)
 
     //опционно
-    def isDefined:Boolean = !isEmpty
+    def isDefined: Boolean = !isEmpty
 
 
   }
 
   case class Some[T](v: T) extends Option[T]
+
   case object None extends Option[Nothing]
 
 
@@ -307,88 +291,192 @@ object hof{
    * в случае если исходный не пуст и предикат от значения = true
    */
 
-  //реализовано в sealed trait Option выше
+  //реализация filter в sealed trait Option выше
+  //альтернативная реализация filter_2
+  //альтернативная реализация filter_3
+
 
   // Тест реализаций в методе main
   ///////////////////////////////////////////////////
 
- }
+}
 
- object list {
-   /**
-    *
-    * Реализовать односвязанный иммутабельный список List
-    * Список имеет два случая:
-    * Nil - пустой список
-    * Cons - непустой, содердит первый элемент (голову) и хвост (оставшийся список)
-    */
+object list {
 
-    sealed trait List[+T]{
-      def ::[TT >: T](elem: TT): List[TT] = ???
+  Cons(1, Nil) // List(1)
+  Cons(1, Cons(2, Nil)) // List(1, 2, 3)
+  Cons(1, Cons(2, Cons(3, Nil))) // List()
+
+
+  List(1, 2)
+
+
+  /**
+   *
+   * Реализовать односвязанный иммутабельный список List
+   * Список имеет два случая:
+   * Nil - пустой список
+   * Cons - непустой, содердит первый элемент (голову) и хвост (оставшийся список)
+   */
+
+  /////////////// Домашнее задание //////////////
+
+  sealed trait List[+T] {
+
+    def ::[TT >: T](elem: TT): List[TT] = Cons(elem, this)
+
+    def mkString(delimiter: String): String = {
+      @tailrec
+      def concat[TT >: T](l: List[TT], acc: String): String = l match {
+        case Nil => acc
+        case Cons(head, tail) =>
+          concat(tail, head.toString.reverse + delimiter.reverse + acc)
+      }
+
+      concat(this, "").dropRight(delimiter.length).reverse
     }
 
-    case class Cons[A](head: A, tail: List[A]) extends List[A]
-    case object Nil extends List[Nothing]
+    def init[TT >: T](v: TT*): List[TT] = {
+      @tailrec
+      def recursion(seq: Seq[TT], acc: List[TT]): List[TT] = seq match {
+        case Seq() => acc
+        case head +: tail => recursion(tail, Cons(head, acc))
+      }
 
-   object List{
-     def apply[A](v: A*): List[A] =
-       if(v.isEmpty) Nil
-       else Cons(v.head, apply(v.tail:_*))
-   }
+      recursion(v.reverse, Nil)
 
-   Cons(1, Nil) // List(1)
-   Cons(1, Cons(2, Nil)) // List(1, 2, 3)
-   Cons(1, Cons(2, Cons(3, Nil))) // List()
+    }
 
+    def reverse[TT >: T]: List[TT] = {
+      @tailrec
+      def rev(l: List[TT], acc: List[TT]): List[TT] = l match {
+        case Nil => acc
+        case Cons(head, tail) => rev(tail, head :: acc)
+      }
 
-   // List(1, 2)
+      rev(this, Nil)
+    }
 
+    def map[TT >: T, B](f: TT => B): List[B] = {
+      @tailrec
+      def rec(l: List[TT], acc: List[B]): List[B] = l match {
+        case Nil => acc
+        case Cons(head, tail) => rec(tail, f(head) :: acc)
+      }
 
-   /**
-     * Метод cons, добавляет элемент в голову списка, для этого метода можно воспользоваться названием `::`
-     *
-     */
+      rec(this, Nil).reverse
+    }
 
-    /**
-      * Метод mkString возвращает строковое представление списка, с учетом переданного разделителя
-      *
-      */
+    //// альтернативная реализация map через foldRight ///////////////////
+    // реализуем стекобезопвсный foldLeft
+    @tailrec
+    final def foldLeft[TT >: T, B](l: List[TT], b: B)(f: (B, TT) => B): B = l match {
+      case Nil => b
+      case Cons(h, t) => foldLeft(t, f(b, h))(f)
+    }
 
-    /**
-      * Конструктор, позволяющий создать список из N - го числа аргументов
-      * Для этого можно воспользоваться *
-      * 
-      * Например вот этот метод принимает некую последовательность аргументов с типом Int и выводит их на печать
-      * def printArgs(args: Int*) = args.foreach(println(_))
-      */
+    //реализуем foldRight на foldLeft
+    def foldRight[TT >: T, B](l: List[TT], z: B)(f: (TT, B) => B): B =
+      foldLeft(l.reverse, z)((b, a) => f(a, b))
 
-    /**
-      *
-      * Реализовать метод reverse который позволит заменить порядок элементов в списке на противоположный
-      */
-
-    /**
-      *
-      * Реализовать метод map для списка который будет применять некую ф-цию к элементам данного списка
-      */
-
-
-    /**
-      *
-      * Реализовать метод filter для списка который будет фильтровать список по некому условию
-      */
-
-    /**
-      *
-      * Написать функцию incList котрая будет принимать список Int и возвращать список,
-      * где каждый элемент будет увеличен на 1
-      */
+    //реализуем map на foldRight
+    def map_2[TT >: T, B](f: TT => B): List[B] =
+      foldRight(this, Nil: List[B])((h, t) => Cons(f(h), t))
+    ///////////////////////////////////////////////////////////////////
 
 
-    /**
-      *
-      * Написать функцию shoutString котрая будет принимать список String и возвращать список,
-      * где к каждому элементу будет добавлен префикс в виде '!'
-      */
 
- }
+    def filter[TT >: T](p: TT => Boolean): List[TT] = {
+      def rec(l: List[TT], acc: List[TT]): List[TT] = l match {
+        case Nil => acc
+        case Cons(h, t) => rec(t, if (p(h)) h :: acc else acc)
+      }
+
+      rec(this, Nil).reverse
+    }
+
+    //альтернативная реализация на foldRight
+    def filter_2[TT >: T](p: TT => Boolean): List[TT] =
+      foldRight(this, Nil: List[TT])((h, t) => if (p(h)) Cons(h, t) else t)
+
+  }
+
+  case class Cons[A](head: A, tail: List[A]) extends List[A]
+
+  case object Nil extends List[Nothing]
+
+  object List {
+    def apply[A](v: A*): List[A] =
+      if (v.isEmpty) Nil
+      else Cons(v.head, apply(v.tail: _*))
+  }
+
+
+  /**
+   * Метод cons, добавляет элемент в голову списка, для этого метода можно воспользоваться названием `::`
+   *
+   */
+
+  //реализовано в sealed trait List выше
+
+  /**
+   * Метод mkString возвращает строковое представление списка, с учетом переданного разделителя
+   *
+   */
+  //реализовано в sealed trait List выше
+
+  /**
+   * Конструктор, позволяющий создать список из N - го числа аргументов
+   * Для этого можно воспользоваться *
+   *
+   * Например вот этот метод принимает некую последовательность аргументов с типом Int и выводит их на печать
+   * def printArgs(args: Int*) = args.foreach(println(_))
+   */
+
+  //метод init реализован в sealed trait List выше
+
+  /**
+   *
+   * Реализовать метод reverse который позволит заменить порядок элементов в списке на противоположный
+   */
+
+  //реализовано в sealed trait List выше
+
+  /**
+   *
+   * Реализовать метод map для списка который будет применять некую ф-цию к элементам данного списка
+   */
+
+  //реализация map через рекурсию и паттерн-матчинг  в sealed trait List выше
+  //созданы  реализации foldLeft и foldRight
+  //реализация map_2  на foldRight
+
+
+  /**
+   *
+   * Реализовать метод filter для списка который будет фильтровать список по некому условию
+   */
+  //реализация filter через рекурсию и паттерн-матчинг  в sealed trait List выше
+  //альтернативная реализация filter_2 на foldRight
+
+
+  /**
+   *
+   * Написать функцию incList котрая будет принимать список Int и возвращать список,
+   * где каждый элемент будет увеличен на 1
+   */
+ // реализация
+ def incList(l: List[Int]): List[Int] = l map[Int,Int] (_ + 1)
+
+  /**
+   *
+   * Написать функцию shoutString котрая будет принимать список String и возвращать список,
+   * где к каждому элементу будет добавлен префикс в виде '!'
+   */
+  //реализация
+  def shoutString(l: List[String]): List[String] = l map[String,String] ("!" + _)
+
+  // Тест реализаций в методе runTest объекта CustomListTest. Вызывается из метода main.
+  ////////////////////////////////////////////////////////////////////////////////////////
+
+}

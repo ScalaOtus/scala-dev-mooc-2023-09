@@ -1,23 +1,24 @@
 
 import module1.opt._
 import module1.recursion.fibonachi
+import module1.utils.CustomListTest.runTest
 
 object Main {
 
   def main(args: Array[String]): Unit = {
     println("Hello world ")
 
-    val t: Unit = true
-    print(t)
+    /*val t: Unit = true
+    print(t)*/
 
 
     ////////////////// Домашнее задание //////////////
     println
     // реализация вычисления чисел фиббоначи
     println("\nFibonachi")
-    (1 to 10) foreach (x => println(fibonachi(x)))
+    (1 to 20) foreach (x => println(fibonachi(x)))
 
-    println("\nOption")
+    println("\n******************** Option ***********************")
     println(" printIfAny")
     val lAnyOPtion = List(Some("один"), None, Some(1), None, Some("два"), None, Some(2), None, Some("три"), None, Some(3))
     println(s" Test Option values = $lAnyOPtion")
@@ -58,6 +59,8 @@ object Main {
     intListOt.map(x => x.filter_3(_ >= 0)).collect { case Some(x) => x }.foreach(println)
     println(" value < 0")
     intListOt.map(x => x.filter_3(_ < 0)).collect { case Some(x) => x }.foreach(println)
+
+    runTest
 
   }
 
