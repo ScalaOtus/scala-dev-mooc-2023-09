@@ -193,10 +193,10 @@ object hof{
 
    def treat(animal: Option[Animal]): Unit = ???
 
-   val animal: Animal = ???
-   val dog: Dog = ???
-   treat(animal)
-   treat(dog)
+//   val animal: Animal = ???
+//   val dog: Dog = ???
+//   treat(animal)
+//   treat(dog)
 
   def divide(x: Int, y: Int): Option[Int] = {
     if(y == 0) None
@@ -220,6 +220,21 @@ object hof{
      def flatMap[B](f: T => Option[B]): Option[B] = this match {
        case Some(v) => f(v)
        case None => None
+     }
+
+     def printIfAny(): Unit = this match {
+       case Some(v) => println(v)
+       case None =>
+     }
+
+     def zip[TT >: T](other: Option[TT]): Option[(TT, TT)] = (this, other) match {
+       case (Some(v1), Some(v2)) => Some((v1, v2))
+       case _ => None
+     }
+
+     def filter(p: T => Boolean): Option[T] = this match {
+       case Some(v) if p(v) => Some(v)
+       case _ => None
      }
   }
 
@@ -273,7 +288,38 @@ object hof{
     */
 
     sealed trait List[+T]{
-      def ::[TT >: T](elem: TT): List[TT] = ???
+      def ::[TT >: T](elem: TT): List[TT] = this match {
+        case Nil => Cons(elem, Nil)
+        case Cons(head, tail) => Cons(elem, Cons(head, tail))
+      }
+
+      def mkString(sep: String): String = this match {
+        case Nil => ""
+        case Cons(head, Nil) =>s"$head"
+        case Cons(head, tail) =>s"$head$sep${tail.mkString(sep)}"
+      }
+
+      // для reverse
+      def append[TT >: T](elem: TT): List[TT] = this match {
+        case Nil => Cons(elem, Nil)
+        case Cons(head, tail) => Cons(head, tail.append(elem))
+      }
+
+      def reverse: List[T] = this match {
+        case Nil => Nil
+        case Cons(head, tail) => tail.reverse.append(head)
+      }
+
+      def map[B](f: T => B): List[B] = this match {
+        case Nil => Nil
+        case Cons(head, tail) => Cons(f(head), tail.map(f))
+      }
+
+      def filter(p: T => Boolean): List[T] = this match {
+        case Nil => Nil
+        case Cons(head, tail) if p(head) => Cons(head, tail.filter(p))
+        case Cons(_, tail) => tail.filter(p)
+      }
     }
 
     case class Cons[A](head: A, tail: List[A]) extends List[A]
@@ -332,12 +378,16 @@ object hof{
       * Написать функцию incList котрая будет принимать список Int и возвращать список,
       * где каждый элемент будет увеличен на 1
       */
-
+    def incList(list: List[Int]): List[Int] = {
+      list.map(_ + 1)
+    }
 
     /**
       *
       * Написать функцию shoutString котрая будет принимать список String и возвращать список,
       * где к каждому элементу будет добавлен префикс в виде '!'
       */
-
+    def shoutString(list: List[String]): List[String] = {
+      list.map("!" + _)
+    }
  }
