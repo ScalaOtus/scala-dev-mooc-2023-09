@@ -315,6 +315,17 @@ object hof{
         case Cons(head, tail) => Cons(f(head), tail.map(f))
       }
 
+      // для flatMap
+      def ++[TT >: T](elems: List[TT]): List[TT] = this match {
+        case Nil => elems
+        case Cons(head, tail) => Cons(head, tail ++ elems)
+      }
+
+      def flatMap[B](f: T => List[B]): List[B] = this match {
+        case Nil => Nil
+        case Cons(head, tail) => f(head) ++ tail.flatMap(f)
+      }
+
       def filter(p: T => Boolean): List[T] = this match {
         case Nil => Nil
         case Cons(head, tail) if p(head) => Cons(head, tail.filter(p))
