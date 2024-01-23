@@ -1,3 +1,4 @@
+/* закомментировал чтобы компилировалось
 package catstypes
 
 import cats.data.{Chain, Ior, Kleisli, NonEmptyChain, NonEmptyList, OptionT, Validated, ValidatedNec}
@@ -228,7 +229,7 @@ object  cats_type_classes{
 
 }
 
-
+*/
 
 
 
